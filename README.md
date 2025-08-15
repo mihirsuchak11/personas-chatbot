@@ -10,7 +10,7 @@ A Next.js-based chat application that enables conversations with AI personas, fe
 _Main chat interface with message bubbles and persona avatar_
 
 ![Persona Selection](./public/screenshot-3.png)
-_Persona selection interface showing available AI characters_
+_Persona selection interface_
 
 ![Default View](./public/screenshot-2.png)
 _Default view_

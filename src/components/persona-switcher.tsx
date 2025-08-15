@@ -128,9 +128,9 @@ export default function PersonaSwitcher({ resumeStream, personaId }: Props) {
                 href={`/persona/${p.id}`}
                 role="option"
                 aria-selected="false"
-                onClick={() => {
+                onClick={async () => {
                   setOpen(false);
-                  resumeStream();
+                  await resumeStream();
                 }}
                 className="text-left cursor-pointer"
               >
