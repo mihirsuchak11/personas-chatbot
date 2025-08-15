@@ -1,4 +1,102 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Persona Chat App
+
+A Next.js-based chat application that enables conversations with AI personas, featuring real-time streaming responses and a dynamic user interface.
+
+## Features
+
+### Core Functionality
+
+- Real-time chat interface with AI personas
+- Streaming responses with typing indicators
+- Persona switching between different characters (currently Hitesh and Piyush)
+- URL detection and automatic linking in messages
+- Markdown formatting support
+- Auto-scroll to latest messages
+- Auto-scroll to latest messages
+
+### UI/UX
+
+- Responsive design with mobile support
+- Custom avatar system with fallback initials
+- Message bubbles with distinct styling for user and AI
+- Persona switcher with visual feedback
+- Loading states and animations
+- Basic Accessibility
+
+### Technical Features
+
+- Built with Next.js 15 and TypeScript
+- Server-side streaming using Edge Runtime
+- TailwindCSS for styling
+- Custom fonts (Inter, JetBrains Mono) for better readability
+- OpenAI integration for chat completions
+
+## Future Improvements
+
+### Core Features
+
+1. Message persistence
+
+   - Add database integration for message history
+   - Enable chat session restoration
+   - Add message search functionality
+
+2. Enhanced Interactions
+
+   - Add support for image uploads
+   - Enable code snippet formatting with syntax highlighting
+   - Add voice input/output options
+   - Implement message reactions
+
+3. Persona System
+   - Add persona creation interface
+   - Enable custom persona uploads
+   - Add persona preferences and settings
+   - Implement persona conversation memory
+
+### UI/UX Improvements
+
+1. Accessibility
+
+   - Add keyboard navigation
+   - Improve screen reader support
+   - Add high contrast mode
+   - Implement reduced motion options
+
+2. User Experience
+
+   - Add message timestamps
+   - Enable message editing/deletion
+   - Add share message functionality
+   - Implement conversation export
+
+3. Visual Enhancements
+   - Add light mode theme
+   - Enable custom theme creation
+   - Add more avatar options
+   - Implement animated transitions
+
+### Technical Improvements
+
+1. Performance
+
+   - Implement message virtualization
+   - Add message batching
+   - Optimize asset loading
+   - Add service worker for offline support
+
+2. Development
+
+   - Add comprehensive test suite
+   - Implement CI/CD pipeline
+   - Add documentation generation
+   - Create component storybook
+
+3. Security
+   - Add rate limiting
+   - Implement message encryption
+   - Add user authentication
+   - Enable secure data storage
 
 ## Getting Started
 
@@ -8,29 +106,21 @@ First, run the development server:
 npm run dev
 # or
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Environment Variables
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Create a `.env.local` file with the following variables:
 
-## Learn More
+```env
+OPENAI_API_KEY=your_api_key_here
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Tech Stack
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Next.js 14
+- TypeScript
+- TailwindCSS
+- OpenAI

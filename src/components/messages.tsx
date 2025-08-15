@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { UIMessage } from "ai";
 import { PersonaId, PERSONAS } from "@/lib/personas";
+import MarkdownMessage from "./markdown-message";
 
 export default function Messages({
   messages,
@@ -59,8 +60,7 @@ export default function Messages({
                           className="whitespace-pre-wrap font-jetbrains"
                           key={`${m.id}-${index}`}
                         >
-                          {/* {part.text} */}
-                          <LinkifyUrls text={part.text} />
+                          <MarkdownMessage text={part.text} />
                         </div>
                       );
                     }
@@ -113,55 +113,5 @@ function TypingDots() {
       <span className="h-2 w-2 rounded-full bg-current animate-bounce [animation-delay:-0.15s]" />
       <span className="h-2 w-2 rounded-full bg-current animate-bounce" />
     </div>
-  );
-}
-
-function LinkifyUrls({ text }: { text: string }) {
-  const URL_RE = /(https?:\/\/[^\s<>"')\]}]+)/gi;
-
-  // Render each line to preserve original line breaks
-  return (
-    <>
-      {text.split(/\r?\n/).map((line, li) => {
-        const nodes: React.ReactNode[] = [];
-        let last = 0;
-
-        for (const m of line.matchAll(URL_RE)) {
-          const start = m.index ?? 0;
-          const raw = m[0];
-
-          // push preceding text
-          if (start > last) nodes.push(line.slice(last, start));
-
-          // trim trailing punctuation like ".", ",", ")", "]", "}"
-          const trimmed = raw.replace(/[.,)\]\}]+$/g, "");
-          const trailing = raw.slice(trimmed.length);
-
-          nodes.push(
-            <a
-              key={`u-${li}-${start}`}
-              href={trimmed}
-              target="_blank"
-              rel="noopener noreferrer nofollow"
-              className="underline text-white hover:text-blue-300 break-words"
-            >
-              {trimmed}
-            </a>
-          );
-
-          // re-add any trimmed punctuation as plain text
-          if (trailing) nodes.push(trailing);
-          last = start + raw.length;
-        }
-
-        if (last < line.length) nodes.push(line.slice(last));
-
-        return (
-          <div key={li} className="whitespace-pre-wrap break-words">
-            {nodes.length ? nodes : line}
-          </div>
-        );
-      })}
-    </>
   );
 }
