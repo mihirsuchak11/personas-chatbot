@@ -42,7 +42,7 @@ const ChatInput = ({
               type="submit"
               disabled={!input.trim()}
               size="icon"
-              className="bg-purple-600 hover:bg-purple-700 text-white h-8 w-8 rounded-lg disabled:bg-gray-700 disabled:text-gray-500"
+              className="flex"
             >
               <Send className="w-4 h-4" />
             </Button>

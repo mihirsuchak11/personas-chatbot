@@ -34,7 +34,6 @@ function initials(name: string) {
 
 export default function PersonaSwitcher({ resumeStream, personaId }: Props) {
   const current = PERSONAS[personaId];
-
   const [open, setOpen] = React.useState(false);
 
   return (
@@ -83,30 +82,63 @@ export default function PersonaSwitcher({ resumeStream, personaId }: Props) {
         >
           {Object.values(PERSONAS).map((p) => {
             const active = p.id === personaId;
+
+            // Active: render a non-clickable div
+            if (active) {
+              return (
+                <div
+                  key={p.id}
+                  role="option"
+                  aria-selected="true"
+                  aria-disabled="true"
+                  tabIndex={-1}
+                  className="text-left cursor-default"
+                >
+                  <Card className="border p-3 transition border-zinc-600 bg-zinc-800 pointer-events-none">
+                    <div className="flex items-start gap-3">
+                      <Avatar
+                        className={cn(
+                          "h-12 w-12 ring-2 ring-offset-2 ring-offset-zinc-900",
+                          p.accent
+                        )}
+                      >
+                        <AvatarImage src={p.avatarUrl} alt={p.name} />
+                        <AvatarFallback className="bg-zinc-800 text-zinc-100">
+                          {initials(p.name)}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="min-w-0">
+                        <div className="text-sm font-semibold text-zinc-100">
+                          {p.name} <span className="sr-only">(current)</span>
+                        </div>
+                        <div className="text-[12px] text-zinc-400">
+                          {p.title}
+                        </div>
+                      </div>
+                    </div>
+                  </Card>
+                </div>
+              );
+            }
+
+            // Inactive: clickable Link
             return (
               <Link
                 key={p.id}
                 href={`/persona/${p.id}`}
                 role="option"
-                aria-selected={active}
+                aria-selected="false"
                 onClick={() => {
                   setOpen(false);
                   resumeStream();
                 }}
                 className="text-left cursor-pointer"
               >
-                <Card
-                  className={cn(
-                    "border p-3 transition",
-                    active
-                      ? "border-zinc-600 bg-zinc-800"
-                      : "border-zinc-800 hover:bg-zinc-800/70"
-                  )}
-                >
+                <Card className="border p-3 transition border-zinc-800 hover:bg-zinc-800/70">
                   <div className="flex items-start gap-3">
                     <Avatar
                       className={cn(
-                        `h-12 w-12 ring-2 ring-offset-2 ring-offset-zinc-900`,
+                        "h-12 w-12 ring-2 ring-offset-2 ring-offset-zinc-900",
                         p.accent
                       )}
                     >
@@ -116,7 +148,7 @@ export default function PersonaSwitcher({ resumeStream, personaId }: Props) {
                       </AvatarFallback>
                     </Avatar>
                     <div className="min-w-0">
-                      <div className="text-sm font-semibold  text-zinc-100">
+                      <div className="text-sm font-semibold text-zinc-100">
                         {p.name}
                       </div>
                       <div className="text-[12px] text-zinc-400">{p.title}</div>

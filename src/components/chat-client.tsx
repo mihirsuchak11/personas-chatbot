@@ -15,7 +15,7 @@ export default function ChatClient({ personaId }: { personaId: PersonaId }) {
   const { messages, sendMessage, status, error, stop, resumeStream } = useChat({
     transport: new DefaultChatTransport({
       api: "/api/chat",
-      body: { personaId: "hitesh" },
+      body: { personaId },
     }),
   });
 
@@ -38,7 +38,13 @@ export default function ChatClient({ personaId }: { personaId: PersonaId }) {
         <header className="flex items-center justify-between p-4 border-b border-zinc-800">
           <PersonaSwitcher personaId={personaId} resumeStream={resumeStream} />
         </header>
-
+        {error && (
+          <div className="flex-1 overflow-y-auto p-4">
+            <div className="text-red-500 text-center mb-4">
+              {error?.message || "Something went wrong!"}
+            </div>
+          </div>
+        )}
         {messages.length === 0 ? (
           <EmptyState
             personaId={personaId}

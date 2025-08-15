@@ -2,6 +2,7 @@ import { UIMessage, streamText, convertToModelMessages } from "ai";
 import { openai } from "@ai-sdk/openai";
 import { PersonaId } from "@/lib/personas";
 import { HITESH_CONTEXT, HITESH_PROMPT_RULES } from "@/lib/prompts/hitesh";
+import { PIYUSH_CONTEXT, PIYUSH_PROMPT_RULES } from "@/lib/prompts/piyush";
 
 export async function POST(req: Request) {
   try {
@@ -11,10 +12,10 @@ export async function POST(req: Request) {
     }: { messages: UIMessage[]; personaId: PersonaId } = await req.json();
 
     const system =
-      personaId === "hitesh" ? HITESH_PROMPT_RULES : HITESH_PROMPT_RULES; //TODO: Replace here for another person
+      personaId === "hitesh" ? HITESH_PROMPT_RULES : PIYUSH_PROMPT_RULES; //TODO: Replace here for another person
 
     const context = `CONTEXT_JSON:\n${
-      personaId === "hitesh" ? HITESH_CONTEXT : HITESH_CONTEXT //TODO: Replace here for another person
+      personaId === "hitesh" ? HITESH_CONTEXT : PIYUSH_CONTEXT //TODO: Replace here for another person
     }`;
 
     const result = await streamText({
