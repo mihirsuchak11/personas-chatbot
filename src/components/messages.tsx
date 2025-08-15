@@ -14,7 +14,6 @@ export default function Messages({
 }) {
   const bottomRef = useRef<HTMLDivElement | null>(null);
 
-  // Auto scroll to bottom when messages change
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
@@ -30,7 +29,7 @@ export default function Messages({
           return (
             <div
               key={m.id}
-              className={`flex gap-3 ${
+              className={`flex gap-3 items-end ${
                 isUser ? "justify-end" : "justify-start"
               }`}
             >
@@ -54,19 +53,18 @@ export default function Messages({
                   }`}
                 >
                   {m.parts.map((part, index) => {
-                    console.log(part, "part");
-                    switch (part.type) {
-                      case "text":
-                        return (
-                          <div
-                            className="whitespace-pre-wrap font-jetbrains"
-                            key={`${m.id}-${index}`}
-                          >
-                            {/* {part.text} */}
-                            <LinkifiedText text={part.text} />
-                          </div>
-                        );
+                    if (part.type === "text") {
+                      return (
+                        <div
+                          className="whitespace-pre-wrap font-jetbrains"
+                          key={`${m.id}-${index}`}
+                        >
+                          {/* {part.text} */}
+                          <LinkifyUrls text={part.text} />
+                        </div>
+                      );
                     }
+                    return null;
                   })}
                 </div>
               </div>
@@ -118,141 +116,52 @@ function TypingDots() {
   );
 }
 
-function LinkifiedText({ text }: { text: string }) {
-  // Split by lines so we can detect platform hints per line
-  const lines = text.split(/\r?\n/);
+function LinkifyUrls({ text }: { text: string }) {
+  const URL_RE = /(https?:\/\/[^\s<>"')\]}]+)/gi;
 
+  // Render each line to preserve original line breaks
   return (
     <>
-      {lines.map((line, li) => (
-        <div key={li}>
-          {linkifyLine(line)}
-          {li < lines.length - 1 ? <br /> : null}
-        </div>
-      ))}
+      {text.split(/\r?\n/).map((line, li) => {
+        const nodes: React.ReactNode[] = [];
+        let last = 0;
+
+        for (const m of line.matchAll(URL_RE)) {
+          const start = m.index ?? 0;
+          const raw = m[0];
+
+          // push preceding text
+          if (start > last) nodes.push(line.slice(last, start));
+
+          // trim trailing punctuation like ".", ",", ")", "]", "}"
+          const trimmed = raw.replace(/[.,)\]\}]+$/g, "");
+          const trailing = raw.slice(trimmed.length);
+
+          nodes.push(
+            <a
+              key={`u-${li}-${start}`}
+              href={trimmed}
+              target="_blank"
+              rel="noopener noreferrer nofollow"
+              className="underline text-white hover:text-blue-300 break-words"
+            >
+              {trimmed}
+            </a>
+          );
+
+          // re-add any trimmed punctuation as plain text
+          if (trailing) nodes.push(trailing);
+          last = start + raw.length;
+        }
+
+        if (last < line.length) nodes.push(line.slice(last));
+
+        return (
+          <div key={li} className="whitespace-pre-wrap break-words">
+            {nodes.length ? nodes : line}
+          </div>
+        );
+      })}
     </>
   );
-}
-
-function linkifyLine(line: string) {
-  // Basic patterns
-  const urlRegex = /(?:https?:\/\/|www\.)[^\s<]+/gi;
-  const emailRegex = /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b/gi;
-
-  // Platform hints (per line)
-  const hasYouTube =
-    /(?:\bYou\s?Tube\b|\bYoutube\b|\bYT\b|\byoutube\.com\b)/i.test(line);
-  const hasTwitter = /(?:\bTwitter\b|\bX\b|\bx\.com\b)/i.test(line);
-  const hasInstagram = /(?:\bInstagram\b|\bIG\b|\binsta\b)/i.test(line);
-  const hasGitHub = /(?:\bGitHub\b|\bgithub\.com\b)/i.test(line);
-
-  // Standalone @handles (avoid emails already matched)
-  // Note: keep handles simple (letters, numbers, underscore, dot, hyphen)
-  const handleRegex = /(^|[\s([{-])@([A-Za-z0-9._-]{2,30})\b/g;
-
-  // We’ll replace in a single pass: URLs/emails first, then platform handles
-  const tokens: Array<string | React.ReactNode> = [];
-  let lastIndex = 0;
-
-  // Helper to push plain text chunks safely
-  const pushPlain = (end: number) => {
-    if (end > lastIndex) tokens.push(line.slice(lastIndex, end));
-    lastIndex = end;
-  };
-
-  // 1) Linkify URLs
-  for (const match of line.matchAll(urlRegex)) {
-    const start = match.index ?? 0;
-    const raw = match[0];
-    pushPlain(start);
-
-    const href = raw.startsWith("http") ? raw : `https://${raw}`;
-    tokens.push(
-      <a
-        key={`u-${start}`}
-        href={href}
-        target="_blank"
-        rel="noopener noreferrer nofollow"
-        className="underline text-blue-400 hover:text-blue-300 break-words"
-      >
-        {raw}
-      </a>
-    );
-    lastIndex = start + raw.length;
-  }
-
-  // 2) Linkify emails
-  const afterUrls = line.slice(lastIndex);
-  if (afterUrls) {
-    // Process emails in the remaining slice
-    const emailTokens: Array<string | React.ReactNode> = [];
-    let eLast = 0;
-    for (const m of afterUrls.matchAll(emailRegex)) {
-      const eStart = m.index ?? 0;
-      const raw = m[0];
-      if (eStart > eLast) emailTokens.push(afterUrls.slice(eLast, eStart));
-      emailTokens.push(
-        <a
-          key={`e-${lastIndex + eStart}`}
-          href={`mailto:${raw}`}
-          className="underline text-blue-400 hover:text-blue-300 break-words"
-        >
-          {raw}
-        </a>
-      );
-      eLast = eStart + raw.length;
-    }
-    if (eLast < afterUrls.length) emailTokens.push(afterUrls.slice(eLast));
-    // Replace tokens with email-processed ones
-    tokens.push(...emailTokens);
-    lastIndex = line.length;
-  }
-
-  // At this point, tokens include links for URLs/emails and plain strings.
-  // 3) Now go through tokens and within plain strings, convert @handles with platform hints.
-  const finalTokens: Array<string | React.ReactNode> = [];
-  for (let i = 0; i < tokens.length; i++) {
-    const t = tokens[i];
-    if (typeof t !== "string") {
-      finalTokens.push(t);
-      continue;
-    }
-
-    const str = t;
-    let cursor = 0;
-    for (const m of str.matchAll(handleRegex)) {
-      const start = m.index ?? 0;
-      const prefix = m[1] ?? ""; // leading char or space
-      const handle = m[2];
-
-      // Avoid turning emails into handles (already handled) and extremely short/long handles
-      // Decide destination by platform hints present in THIS line:
-      let href: string | null = null;
-      if (hasYouTube) href = `https://www.youtube.com/@${handle}`;
-      else if (hasTwitter) href = `https://x.com/${handle}`;
-      else if (hasInstagram) href = `https://instagram.com/${handle}`;
-      else if (hasGitHub) href = `https://github.com/${handle}`;
-      // If no hint, leave as plain text to avoid wrong links.
-      if (!href) continue;
-
-      if (start > cursor) finalTokens.push(str.slice(cursor, start));
-      // Keep the delimiter/prefix (space, punctuation) before @
-      finalTokens.push(prefix);
-      finalTokens.push(
-        <a
-          key={`h-${i}-${start}`}
-          href={href}
-          target="_blank"
-          rel="noopener noreferrer nofollow"
-          className="underline text-blue-400 hover:text-blue-300"
-        >
-          @{handle}
-        </a>
-      );
-      cursor = start + prefix.length + 1 + handle.length; // prefix + '@' + handle
-    }
-    if (cursor < str.length) finalTokens.push(str.slice(cursor));
-  }
-
-  return finalTokens.length ? finalTokens : tokens.length ? tokens : line;
 }
