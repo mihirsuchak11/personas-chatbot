@@ -25,19 +25,6 @@ export default function MarkdownMessage({ text }: Props) {
             className="underline text-blue-400 hover:text-blue-300 break-words"
           />
         ),
-        code: ({ inline, className, children, ...props }) =>
-          inline ? (
-            <code
-              {...props}
-              className="rounded bg-black/30 px-1 py-[2px] text-[0.9em]"
-            >
-              {children}
-            </code>
-          ) : (
-            <pre className="bg-black/40 rounded-lg p-3 overflow-x-auto">
-              <code {...props}>{children}</code>
-            </pre>
-          ),
         p: ({ node, ...props }) => (
           <p {...props} className="mb-2 last:mb-0 leading-relaxed" />
         ),
