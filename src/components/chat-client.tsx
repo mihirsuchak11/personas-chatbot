@@ -2,10 +2,8 @@
 
 import Messages from "@/components/messages";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import { useChat } from "@ai-sdk/react";
 import React, { useState } from "react";
-import { Send, PauseCircleIcon } from "lucide-react";
 import PersonaSwitcher from "@/components/persona-switcher";
 import { DefaultChatTransport } from "ai";
 import { PersonaId, PERSONAS } from "@/lib/personas";
@@ -13,8 +11,6 @@ import Image from "next/image";
 import ChatInput from "./chat-input";
 
 export default function ChatClient({ personaId }: { personaId: PersonaId }) {
-  // const { personaId, setPersonaId } = usePersona("hitesh");
-
   const [input, setInput] = useState("");
   const { messages, sendMessage, status, error, stop, resumeStream } = useChat({
     transport: new DefaultChatTransport({
@@ -23,7 +19,7 @@ export default function ChatClient({ personaId }: { personaId: PersonaId }) {
     }),
   });
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     sendMessage({ text: input });
     setInput("");
@@ -83,8 +79,7 @@ function EmptyState({
   const persona = PERSONAS[personaId];
 
   return (
-    <div className="relative flex-1">
-      {/* subtle backdrop */}
+    <div className="relative font-inter flex-1">
       <div className="relative h-full flex flex-col items-center justify-center px-4 text-center">
         <Image
           src={persona.avatarUrl}
@@ -105,14 +100,6 @@ function EmptyState({
             </Button>
           ))}
         </div>
-
-        {/* <div className="mt-6 text-xs text-gray-500">
-          Tip: Press{" "}
-          <span className="px-1 py-0.5 rounded bg-gray-800 border border-gray-700">
-            /
-          </span>{" "}
-          to start a new message.
-        </div> */}
       </div>
     </div>
   );

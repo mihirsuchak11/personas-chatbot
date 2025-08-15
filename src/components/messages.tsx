@@ -49,8 +49,8 @@ export default function Messages({
                 <div
                   className={`rounded-2xl px-4 py-2 whitespace-pre-wrap leading-relaxed ${
                     isUser
-                      ? "bg-zinc-800 text-zinc-100 rounded-br-sm"
-                      : "bg-blue-600 text-white rounded-bl-sm"
+                      ? "bg-[#26272D] text-white rounded-br-sm"
+                      : "bg-[#3f395c] text-white rounded-bl-sm"
                   }`}
                 >
                   {m.parts.map((part, index) => {
@@ -74,7 +74,7 @@ export default function Messages({
               {/* User avatar on the right */}
               {isUser && (
                 <Avatar className="w-8 h-8 mt-1 shrink-0">
-                  <AvatarFallback className="bg-yellow-500 text-black font-semibold text-sm">
+                  <AvatarFallback className="bg-[#505163] text-white font-semibold text-sm">
                     U
                   </AvatarFallback>
                 </Avatar>
@@ -82,14 +82,13 @@ export default function Messages({
             </div>
           );
         })}
-        <div ref={bottomRef} />
       </div>
       {/* Typing loader row (assistant on left) */}
       {showLoader && (
         <AssistantTypingRow avatarUrl={currentPersona?.avatarUrl} />
       )}
-
       {/* Scroll anchor */}
+      <div ref={bottomRef} />
     </div>
   );
 }

@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { ChatRequestOptions } from "ai";
+import { cn } from "@/lib/utils";
 
 type Props = {
   className?: string;
@@ -31,11 +32,7 @@ function initials(name: string) {
     .toUpperCase();
 }
 
-export default function PersonaSwitcher({
-  className,
-  resumeStream,
-  personaId,
-}: Props) {
+export default function PersonaSwitcher({ resumeStream, personaId }: Props) {
   const current = PERSONAS[personaId];
 
   const [open, setOpen] = React.useState(false);
@@ -44,14 +41,15 @@ export default function PersonaSwitcher({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button
-          variant="outline"
-          className={`h-auto cursor-pointer rounded-full border-zinc-700 bg-zinc-900 hover:bg-zinc-800 px-2.5 py-2 ml-auto ${
-            className ?? ""
-          }`}
+          variant="secondary"
+          className="h-auto ml-auto rounded-full px-2.5 py-2"
         >
           <span className="flex items-center gap-3">
             <Avatar
-              className={`h-8 w-8 ring-2 ${current.accent} ring-offset-2 ring-offset-zinc-900`}
+              className={cn(
+                "h-8 w-8 ring-2 ring-offset-2 ring-offset-zinc-900",
+                current.accent
+              )}
             >
               <AvatarImage src={current.avatarUrl} alt={current.name} />
               <AvatarFallback className="bg-zinc-800 text-zinc-100">
@@ -73,13 +71,16 @@ export default function PersonaSwitcher({
 
       <DialogContent className="sm:max-w-xl border-zinc-700 bg-zinc-900">
         <DialogHeader>
-          <DialogTitle className="text-zinc-100">Choose persona</DialogTitle>
+          <DialogTitle className="text-zinc-100">Choose Persona</DialogTitle>
           <DialogDescription className="text-zinc-400">
             Pick who you want to chat with.
           </DialogDescription>
         </DialogHeader>
 
-        <div role="listbox" className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div
+          role="listbox"
+          className="grid grid-cols-1 font-inter sm:grid-cols-2 gap-3"
+        >
           {Object.values(PERSONAS).map((p) => {
             const active = p.id === personaId;
             return (
@@ -95,15 +96,19 @@ export default function PersonaSwitcher({
                 className="text-left cursor-pointer"
               >
                 <Card
-                  className={`border ${
+                  className={cn(
+                    "border p-3 transition",
                     active
                       ? "border-zinc-600 bg-zinc-800"
                       : "border-zinc-800 hover:bg-zinc-800/70"
-                  } p-3 transition`}
+                  )}
                 >
                   <div className="flex items-start gap-3">
                     <Avatar
-                      className={`h-12 w-12 ring-2 ${p.accent} ring-offset-2 ring-offset-zinc-900`}
+                      className={cn(
+                        `h-12 w-12 ring-2 ring-offset-2 ring-offset-zinc-900`,
+                        p.accent
+                      )}
                     >
                       <AvatarImage src={p.avatarUrl} alt={p.name} />
                       <AvatarFallback className="bg-zinc-800 text-zinc-100">
@@ -111,7 +116,7 @@ export default function PersonaSwitcher({
                       </AvatarFallback>
                     </Avatar>
                     <div className="min-w-0">
-                      <div className="text-sm font-semibold text-zinc-100">
+                      <div className="text-sm font-semibold  text-zinc-100">
                         {p.name}
                       </div>
                       <div className="text-[12px] text-zinc-400">{p.title}</div>
